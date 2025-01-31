@@ -1,0 +1,91 @@
+first we start with "npm init -y" to get the package.json
+Then "npm i express" to get the express package so that we can use it....
+we install "npm i --save-dev nodemon" easily restarts server after every update
+
+goto package.json in scripts { }change it to : "devStart": "nodemon server.js"
+so that when we run thr server.js file it starts up on the command in terminal "npm run devStart"
+
+
+after setting up server:
+
+we "npm i ejs " to install the ejs package so that the server can render the index.ejs file we want our client to see
+
+in the code :
+
+app.get('/',(req,res)=>{
+    res.render("index")
+})
+
+Router file if client hits "/user" route:
+
+we can tak all the app.("/users") and put them in ./folders/users.js file
+users.js file looks like this:
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+const express=require('express')
+const router=express.Router()   ->import Router method
+
+router.get("/",(req,res)=>{     -> the path excludes "users/" as in server.js we call it as app.use("/users",userRouter) 
+                                essentialy meanaing that any path hits /users/.... url will route trough app.use and use the userRouter fn
+    res.send("Users page")
+})
+
+router.get("/new",(req,res,)=>{
+    res.send("Users Form Page")
+})
+
+module.exports=router            ->export this file to be USED in  the server.ejs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+to use this userRouter in server.js:
+
+===============================================================================================
+const userRouter=require('./routes/users')
+app.use('/users',userRouter)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+
+dynamic urls maybe you want to goto user with id 2 and get his info "users/2" you can use dynamic urls
+to access their info
+
+Always be careful to put your static urls like router.get("/new",(req,res)=>{}) beacuse if its after  
+router.get("/:id",(req,res)=>{})  
+
+after client hits the url "users/new"  
+express searches the routes from top- to -bottom ,
+what it will do is match the "/new" as variable inplace 
+of the "/:id" variable and print the contents of the router.get("/:id",(req,res)=>{})  
+=================================================================================================
+router.get("/:id",(req,res)=>{                                 -> the url translates to users/:id colon(:) as it keeps variating as userId taken from the parameters from the url
+    const userId=req.params.id
+    res.send(`The User info for the user with id:${userId}`)
+})
+
+
+
+Middlewares:
+
+as soon as the client hits the request the process of req--> middleware --> res takes place
+
+thus middleware functions are executed before the http methods like app.get(),app.post are executed
+and using next() they move onto the normal routes like GET,POST,PUT,DELETE,PATCH and so on 
+====================================================================================================
+function logger(req,res,next){
+    console.log(req.originalUrl)
+    next()
+}
+
+this is a middleware function as soon user hits url "localhost::3000/users/7" before going into routes
+it executes the middleware fn "logger" to and stores the url into the req object
+and consoles.log on your terminal as "/Users/7"
+and then says go onto to the NEXT routes which is app.get()
+
+anything before app.use(logger) will not use the middleparser
+
+if you want a specific app.get () to use the logger function and not the other app requests
+
+you can explicitly specify it app.get("/",logger,(req,res)=>{})
+
+
