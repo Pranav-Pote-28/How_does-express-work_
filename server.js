@@ -4,7 +4,7 @@ const app=express()
 app.set("view engine","ejs")
 app.use(logger)
 
-// Now we can use the HTTP methods like() to access info from ther server which you will code,
+// Now we can use the HTTP methods like(GET<PUT<POST<PATCH<DELETE) to access info from ther server which you will code,
 // app.get essentialy means the user wants to GET some info by hitting on the path "/" (root page ) and we design a function to (req,res)=>{} to handle this particular request
 app.get('/',(req,res)=>{
     res.render("index")
